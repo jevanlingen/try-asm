@@ -59,7 +59,7 @@ public class UseAsmClassAdapter extends ClassVisitor {
         mv.visitVarInsn(ILOAD, 1);
         mv.visitInsn(IADD);
         mv.visitInsn(IRETURN);
-        mv.visitMaxs(2, 2);
+        mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 
@@ -91,7 +91,7 @@ public class UseAsmClassAdapter extends ClassVisitor {
         mv.visitInsn(IRETURN);
 
         // Define the method footer
-        mv.visitMaxs(1, 1);
+        mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 
@@ -135,7 +135,7 @@ public class UseAsmClassAdapter extends ClassVisitor {
         mv.visitInsn(FADD);
         mv.visitInsn(FRETURN);
 
-        mv.visitMaxs(3, 1);
+        mv.visitMaxs(0, 0);
 
         mv.visitEnd();
     }
