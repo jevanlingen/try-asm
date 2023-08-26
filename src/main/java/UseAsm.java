@@ -1,9 +1,11 @@
+import exercise.CustomAnnotations;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public class UseAsm {
 
-    public static void main(String[] args) throws IllegalAccessException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException {
+    public static void main(String[] args) throws IllegalAccessException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException, InstantiationException {
         // boolean can be found
         final var aNewBooleanField = UseAsm.class.getField("aNewBooleanField").getBoolean(null);
         System.out.println(aNewBooleanField);
@@ -31,6 +33,21 @@ public class UseAsm {
         // Call fib method
         var fib = UseAsm.class.getDeclaredMethod("fib", float.class);
         System.out.println(fib.invoke(null, 3));
+
+        // Exercise | Use Custom Annotations
+        final var constructor = CustomAnnotations.class.getConstructor(String.class, boolean.class);
+        constructor.setAccessible(true);
+
+        final var instance = (CustomAnnotations) constructor.newInstance("example", true);
+
+        System.out.println(instance.getClass().getMethod("getFoo").invoke(instance));
+        System.out.println(instance.getClass().getMethod("isBar").invoke(instance));
+
+        instance.getClass().getDeclaredMethod("setFoo", String.class).invoke(instance, "example 2");
+        instance.getClass().getDeclaredMethod("setBar", boolean.class).invoke(instance, false);
+
+        System.out.println(instance.getClass().getMethod("getFoo").invoke(instance));
+        System.out.println(instance.getClass().getMethod("isBar").invoke(instance));
     }
 
     private static void shouldNotBePublic() {
