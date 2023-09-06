@@ -1,4 +1,5 @@
 import asm.ClassRewriter;
+import asm.CustomAnnotationsClassAdapter;
 import asm.UseAsmClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 
@@ -15,6 +16,9 @@ public class Transformer {
             public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] buffer) {
                 if (className.equals("UseAsm")) {
                     return rewriteClass(className, buffer, UseAsmClassAdapter.class);
+                }
+                if (className.equals("exercise/CustomAnnotations")) {
+                    return rewriteClass(className, buffer, CustomAnnotationsClassAdapter.class);
                 }
                 return buffer;
             }
