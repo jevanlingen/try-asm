@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="UseAsm" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="UseAsm" />
+    <module name="try-asm" />
+    <option name="VM_PARAMETERS" value="-javaagent:&quot;$PATH/.m2/repository/org/example/try-asm/1.0-SNAPSHOT/try-asm-1.0-SNAPSHOT.jar&quot;" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
