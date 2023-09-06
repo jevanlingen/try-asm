@@ -35,10 +35,10 @@ public class UseAsm {
         System.out.println(fib.invoke(null, 3));
 
         // Exercise | Use Custom Annotations
-        final var constructor = CustomAnnotations.class.getConstructor(String.class, boolean.class);
+        final var constructor = CustomAnnotations.class.getConstructor(String.class, boolean.class, long.class, int.class);
         constructor.setAccessible(true);
 
-        final var instance = (CustomAnnotations) constructor.newInstance("example", true);
+        final var instance = (CustomAnnotations) constructor.newInstance("example", true, 3L, 3);
 
         System.out.println(instance.getClass().getMethod("getFoo").invoke(instance));
         System.out.println(instance.getClass().getMethod("isBar").invoke(instance));

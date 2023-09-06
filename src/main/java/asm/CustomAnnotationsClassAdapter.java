@@ -11,10 +11,14 @@ import java.util.stream.Collectors;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.objectweb.asm.Opcodes.DLOAD;
+import static org.objectweb.asm.Opcodes.DRETURN;
 import static org.objectweb.asm.Opcodes.GETFIELD;
 import static org.objectweb.asm.Opcodes.ILOAD;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 import static org.objectweb.asm.Opcodes.IRETURN;
+import static org.objectweb.asm.Opcodes.LLOAD;
+import static org.objectweb.asm.Opcodes.LRETURN;
 import static org.objectweb.asm.Opcodes.PUTFIELD;
 import static org.objectweb.asm.Opcodes.RETURN;
 
@@ -82,24 +86,32 @@ public class CustomAnnotationsClassAdapter extends ClassVisitor {
         System.out.println("public <init>(" + incomingTypes + ")V");
         System.out.println("ALOAD 0");
         System.out.println("INVOKESPECIAL java/lang/Object.<init> ()V");
-        for (int i = 0; i < fields.size(); i++) {
+        int cursorX = 0;
+        for (var field : fields) {
+            cursorX++;
             System.out.println("ALOAD 0");
-            System.out.println(switch (fields.get(i).type) {
+            System.out.println(switch (field.type) {
                 case "I", "Z" -> "ILOAD";
-                case default -> "ALOAD";
-            } + " " + (i + 1));
+                case "J" -> "LLOAD";
+                case "D" -> "DLOAD";
+                default -> "ALOAD";
+            } + " " + (cursorX));
 
-            System.out.println("PUTFIELD " + className + "." + fields.get(i).name + " : " + fields.get(i).type);
+            System.out.println("PUTFIELD " + className + "." + field.name + " : " + field.type);
+            if (field.usesTwoArgumentSlots()) cursorX++;
         }
         System.out.println("RETURN");*/
 
         final var mv = cv.visitMethod(ACC_PUBLIC, "<init>", "(" + incomingTypes + ")V", null, null);
         mv.visitVarInsn(ALOAD, 0); // Load 'this'
         mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-        for (int i = 0; i < fields.size(); i++) {
+        int cursor = 0;
+        for (var field : fields) {
+            cursor++;
             mv.visitVarInsn(ALOAD, 0); // Load 'this'
-            mv.visitVarInsn(fields.get(i).loadOp(), i + 1); // Load 'field'
-            mv.visitFieldInsn(PUTFIELD, className, fields.get(i).name, fields.get(i).type); // Set 'field'
+            mv.visitVarInsn(field.loadOp(), cursor); // Load 'field'
+            mv.visitFieldInsn(PUTFIELD, className, field.name, field.type); // Set 'field'
+            if (field.usesTwoArgumentSlots()) cursor++;
         }
         mv.visitInsn(RETURN);
         mv.visitMaxs(0,0);
@@ -116,7 +128,9 @@ public class CustomAnnotationsClassAdapter extends ClassVisitor {
         System.out.println("GETFIELD " + className + "." + field.name + " : " + field.type);
         System.out.println(switch (field.type) {
             case "I", "Z" -> "IRETURN";
-            case default -> "ARETURN";
+            case "J" -> "LRETURN";
+            case "D" -> "DRETURN";
+            default -> "ARETURN";
         });*/
 
         var mv = cv.visitMethod(ACC_PUBLIC, methodName, "()" + field.type, null, null);
@@ -136,7 +150,9 @@ public class CustomAnnotationsClassAdapter extends ClassVisitor {
         System.out.println("ALOAD 0");
         System.out.println(switch (field.type) {
             case "I", "Z" -> "ILOAD";
-            case default -> "ALOAD";
+            case "J" -> "LLOAD";
+            case "D" -> "DLOAD";
+            default -> "ALOAD";
         } + " 1");
         System.out.println("PUTFIELD " + className + "." + field.name + " : " + field.type);
         System.out.println("RETURN");*/
@@ -156,15 +172,23 @@ public class CustomAnnotationsClassAdapter extends ClassVisitor {
         public int loadOp() {
             return switch (this.type) {
                 case "I", "Z" -> ILOAD;
-                case default -> ALOAD;
+                case "J" -> LLOAD;
+                case "D" -> DLOAD;
+                default -> ALOAD;
             };
         }
 
         public int returnOp() {
             return switch (this.type) {
                 case "I", "Z" -> IRETURN;
-                case default -> ARETURN;
+                case "J" -> LRETURN;
+                case "D" -> DRETURN;
+                default -> ARETURN;
             };
+        }
+
+        public boolean usesTwoArgumentSlots() {
+            return "J".equals(this.type) || "D".equals(this.type);
         }
     }
 }
