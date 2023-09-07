@@ -1,14 +1,22 @@
 package examine;
 
+import examine.some.deeply.nested.packagename.Whatever;
+
 public class SimpleClass {
 
-    private int foo;
+    private int anInt;
+    private boolean aBoolean;
+    private double aDouble;
+    private long aLong;
+    private float aFloat;
+    private Object anObject;
+    private Whatever anImportedObject;
 
-    public int getFoo() {
-        return foo;
+    public int getAnInt() {
+        return anInt;
     }
 
-    public void setFoo(int foo) {
-        this.foo = foo;
+    public void setAnInt(int anInt) {
+        this.anInt = anInt;
     }
 }
